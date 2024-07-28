@@ -2,125 +2,336 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>十班大乱斗官网</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数独棋</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
             margin: 0;
-            padding: 0;
-            background: #f4f4f4;
+            padding: 20px;
         }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-        }
-        header {
-            background: #333;
-            color: #fff;
-            padding-top: 30px;
-            min-height: 70px;
-            border-bottom: #e8491d 3px solid;
-        }
-        header a {
-            color: #fff;
-            text-decoration: none;
-            text-transform: uppercase;
-            font-size: 16px;
-        }
-        header ul {
-            padding: 0;
-            list-style: none;
-        }
-        header li {
-            display: inline;
-            padding: 0 20px 0 20px;
-        }
-        header #branding {
-            float: left;
-        }
-        header #branding h1 {
-            margin: 0;
-        }
-        header nav {
-            float: right;
-            margin-top: 10px;
-        }
-        header .highlight, header .current a {
-            color: #e8491d;
-            font-weight: bold;
-        }
-        .banner {
-            padding: 40px 0;
-            color: #fff;
-            background: url('your-background-image.jpg') no-repeat 0px -110px;
-            background-size: cover;
-        }
-        .banner h1 {
-            margin: 0;
-            font-size: 55px;
-        }
-        .banner p {
-            font-size: 20px;
-        }
-        .content {
-            background: #fff;
-            padding: 20px 0;
-            border-top: 1px solid #e5e5e5;
-        }
-        .content h2, .content h3 {
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
             color: #333;
         }
-        .content p {
-            line-height: 1.6em;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 60px);
+            grid-template-rows: repeat(7, 60px);
+            gap: 5px;
+            margin: 20px 0;
         }
-        footer {
-            background: #333;
+        .cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #999;
+            background-color: #fff;
+            cursor: pointer;
+            font-size: 1.5em;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .highlight {
+            background-color: #ffeb3b;
+        }
+        .number-buttons {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .number-buttons button {
+            margin: 0 10px;
+            padding: 15px 20px;
+            font-size: 1em;
+            background-color: #2196f3;
+            border: none;
             color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .number-buttons button:hover {
+            background-color: #1976d2;
+        }
+        .number-buttons button:active {
+            transform: scale(0.95);
+        }
+        .disabled {
+            background-color: #ccc !important;
+            cursor: not-allowed;
+        }
+        .scoreboard {
+            margin: 20px 0;
             text-align: center;
-            padding: 10px;
-            position: relative;
-            bottom: 0;
+        }
+        .bold-border-top {
+            border-top: 4px solid yellow !important;
+        }
+        .bold-border-right {
+            border-right: 4px solid yellow !important;
+        }
+        .bold-border-bottom {
+            border-bottom: 4px solid yellow !important;
+        }
+        .bold-border-left {
+            border-left: 4px solid yellow !important;
+        }
+        .blocked {
+            background-color: #f44336;
+            color: #fff;
+        }
+        table {
             width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div id="branding">
-                <h1>十班大乱斗网站</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li class="current"><a href="index.html">首页</a></li>
-                    <li><a href="about.html">关于</a></li>
-                    <li><a href="contact.html">联系方式</a></li>
-                    <li><a href="form.html">留言表单</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
 
-    <section class="banner">
-        <div class="container">
-            <h1>欢迎来到十班大乱斗</h1>
-            <p>这里是十班大乱斗的个人介绍和一些个人信息。</p>
-        </div>
-    </section>
+    <h1>数独棋</h1>
+    <div class="grid" id="grid"></div>
+    <div class="number-buttons" id="number-buttons">
+        <button data-number="1">1</button>
+        <button data-number="2">2</button>
+        <button data-number="3">3</button>
+        <button data-number="4">4</button>
+        <button data-number="5">5</button>
+        <button data-number="6">6</button>
+        <button data-number="7">7</button>
+    </div>
+    <div class="scoreboard" id="scoreboard">
+        <p>分数将在游戏结束时显示。</p>
+    </div>
 
-    <section class="content">
-        <div class="container">
-            <article id="main-col">
-                <h2>十班大乱斗官网</h2>
-                <p>这里是十班大乱斗的唯一官方网站。</p>
-                <!-- 更多关于我的信息可以添加在这里 -->
-            </article>
-        </div>
-    </section>
+    <script>
+        const gridElement = document.getElementById('grid');
+        const numberButtons = document.getElementById('number-buttons');
+        const scoreboard = document.getElementById('scoreboard');
+        
+        const gridSize = 7;
+        const cells = [];
+        let currentPlayer = 'red';
 
-    <footer>
-        <p>版权所有 &copy; 2024 十班大乱斗官方网站</p>
-    </footer>
+        const zones = {
+            1: [1, 2, 8, 9],
+            2: [3, 4, 10, 11],
+            3: [5, 6, 12, 13],
+            4: [15, 16, 22, 23],
+            5: [17, 18, 24, 25],
+            6: [19, 20, 26, 27],
+            7: [29, 30, 36, 37],
+            8: [31, 32, 38, 39],
+            9: [33, 34, 40, 41],
+            10: [7, 14, 21, 28, 35, 42, 49],
+            11: [43, 44, 45, 46, 47, 48]
+        };
+
+        function createGrid() {
+            for (let i = 1; i <= gridSize * gridSize; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.id = i;
+                cell.addEventListener('click', () => selectCell(cell));
+                gridElement.appendChild(cell);
+                cells.push(cell);
+            }
+            applyBoldBorders();
+        }
+
+        function applyBoldBorders() {
+            // Apply bold borders based on zones
+            Object.values(zones).forEach(zone => {
+                zone.forEach(cellId => {
+                    const cell = cells[cellId - 1];
+                    
+                    // Remove any existing bold borders
+                    cell.classList.remove('bold-border-top', 'bold-border-right', 'bold-border-bottom', 'bold-border-left');
+                    
+                    // Check and apply bold borders for each side
+                    if (!zone.includes(cellId - 1) && (cellId - 1) % gridSize !== 0) {
+                        // Left border
+                        cell.classList.add('bold-border-left');
+                    }
+                    if (!zone.includes(cellId + 1) && (cellId % gridSize) !== 0) {
+                        // Right border
+                        cell.classList.add('bold-border-right');
+                    }
+                    if (!zone.includes(cellId - gridSize) && cellId > gridSize) {
+                        // Top border
+                        cell.classList.add('bold-border-top');
+                    }
+                    if (!zone.includes(cellId + gridSize) && cellId <= gridSize * (gridSize - 1)) {
+                        // Bottom border
+                        cell.classList.add('bold-border-bottom');
+                    }
+                });
+            });
+
+            // Apply bold borders to the entire grid's edges
+            for (let i = 0; i < gridSize; i++) {
+                // Top edge
+                cells[i].classList.add('bold-border-top');
+                // Bottom edge
+                cells[gridSize * (gridSize - 1) + i].classList.add('bold-border-bottom');
+                // Left edge
+                cells[gridSize * i].classList.add('bold-border-left');
+                // Right edge
+                cells[gridSize * (i + 1) - 1].classList.add('bold-border-right');
+            }
+        }
+
+        function selectCell(cell) {
+            if (cell.textContent || cell.classList.contains('blocked')) return; // Prevent selecting filled or blocked cells
+            clearHighlights();
+            cell.classList.add('highlight');
+            const selectedCellId = parseInt(cell.dataset.id);
+            updateNumberButtons(selectedCellId);
+        }
+
+        function clearHighlights() {
+            cells.forEach(cell => cell.classList.remove('highlight'));
+        }
+
+        function updateNumberButtons(cellId) {
+            const row = Math.floor((cellId - 1) / gridSize);
+            const col = (cellId - 1) % gridSize;
+            const zoneId = getZoneId(cellId);
+
+            numberButtons.querySelectorAll('button').forEach(button => {
+                const number = parseInt(button.dataset.number);
+                const isDisabled = isNumberUsed(row, col, zoneId, number);
+                button.disabled = isDisabled;
+                button.classList.toggle('disabled', isDisabled);
+            });
+        }
+
+        function getZoneId(cellId) {
+            for (const [zoneId, zoneCells] of Object.entries(zones)) {
+                if (zoneCells.includes(cellId)) {
+                    return parseInt(zoneId);
+                }
+            }
+            return null;
+        }
+
+        function isNumberUsed(row, col, zoneId, number) {
+            for (let i = 0; i < gridSize; i++) {
+                if (cells[row * gridSize + i].textContent == number || cells[i * gridSize + col].textContent == number) {
+                    return true;
+                }
+            }
+            return zones[zoneId].some(cellId => cells[cellId - 1].textContent == number);
+        }
+
+        function fillNumber(number) {
+            const selectedCell = document.querySelector('.cell.highlight');
+            if (!selectedCell || selectedCell.textContent) return;
+
+            selectedCell.textContent = number;
+            selectedCell.style.color = currentPlayer;
+            selectedCell.classList.remove('highlight');
+            currentPlayer = currentPlayer === 'red' ? 'black' : 'red';
+
+            checkGameEnd();
+        }
+
+        function checkGameEnd() {
+            let allFilled = true;
+            let allBlocked = true;
+
+            cells.forEach(cell => {
+                const cellId = parseInt(cell.dataset.id);
+                if (!cell.textContent) {
+                    allFilled = false;
+                    if (!isCellBlocked(cellId)) {
+                        allBlocked = false;
+                    } else {
+                        cell.classList.add('blocked');
+                        cell.textContent = 'X';
+                    }
+                }
+            });
+
+            if (allFilled || allBlocked) {
+                displayScores();
+            }
+        }
+
+        function isCellBlocked(cellId) {
+            const row = Math.floor((cellId - 1) / gridSize);
+            const col = (cellId - 1) % gridSize;
+            const zoneId = getZoneId(cellId);
+            for (let i = 1; i <= 7; i++) {
+                if (!isNumberUsed(row, col, zoneId, i)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function displayScores() {
+            let scores = { red: Array(11).fill(0), black: Array(11).fill(0) };
+
+            Object.entries(zones).forEach(([zoneId, zoneCells]) => {
+                let redSum = 0, blackSum = 0, redCount = 0, blackCount = 0;
+
+                zoneCells.forEach(cellId => {
+                    const cell = cells[cellId - 1];
+                    const number = parseInt(cell.textContent);
+                    if (!number || cell.textContent === 'X') return;
+
+                    if (cell.style.color === 'red') {
+                        redSum += number;
+                        redCount++;
+                    } else {
+                        blackSum += number;
+                        blackCount++;
+                    }
+                });
+
+                const redScore = (redSum - blackSum) * redCount;
+                const blackScore = (blackSum - redSum) * blackCount;
+
+                scores.red[zoneId - 1] = redScore;
+                scores.black[zoneId - 1] = blackScore;
+            });
+
+            const redTotal = scores.red.reduce((a, b) => a + b, 0);
+            const blackTotal = scores.black.reduce((a, b) => a + b, 0);
+
+            let scoreHTML = '<h2>游戏结束</h2>';
+            scoreHTML += '<h3>得分</h3>';
+            scoreHTML += '<table><tr><th>区域</th>' + Array.from({ length: 11 }, (_, i) => `<th>${i + 1}</th>`).join('') + '<th>总分</th></tr>';
+            scoreHTML += `<tr><td>红方</td>${scores.red.map(score => `<td>${score}</td>`).join('')}<td>${redTotal}</td></tr>`;
+            scoreHTML += `<tr><td>黑方</td>${scores.black.map(score => `<td>${score}</td>`).join('')}<td>${blackTotal}</td></tr></table>`;
+            scoreHTML += `<h3>获胜者: ${redTotal > blackTotal ? '红方' : '黑方'}</h3>`;
+
+            scoreboard.innerHTML = scoreHTML;
+        }
+
+        numberButtons.addEventListener('click', (event) => {
+            if (!event.target.dataset.number) return;
+            fillNumber(event.target.dataset.number);
+        });
+
+        createGrid();
+    </script>
+
 </body>
 </html>
